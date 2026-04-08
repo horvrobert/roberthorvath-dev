@@ -40,41 +40,70 @@ resource "aws_iam_role_policy" "github_actions" {
           "s3:PutObject",
           "s3:GetObject",
           "s3:DeleteObject",
-          "s3:ListBucket"
+          "s3:ListBucket",
+          "s3:GetBucketPolicy",
+          "s3:PutBucketPolicy",
+          "s3:GetBucketVersioning",
+          "s3:GetBucketPublicAccessBlock",
+          "s3:PutBucketPublicAccessBlock"
         ]
         Resource = [
           "arn:aws:s3:::roberthorvath.dev",
-          "arn:aws:s3:::roberthorvath.dev/*"
+          "arn:aws:s3:::roberthorvath.dev/*",
+          "arn:aws:s3:::robikov-terraform-state-bucket",
+          "arn:aws:s3:::robikov-terraform-state-bucket/*"
         ]
       },
       {
         Effect = "Allow"
         Action = [
-          "cloudfront:CreateInvalidation"
+          "cloudfront:CreateInvalidation",
+          "cloudfront:GetDistribution",
+          "cloudfront:GetOriginAccessControl",
+          "cloudfront:ListDistributions"
         ]
         Resource = "*"
       },
       {
         Effect = "Allow"
         Action = [
-          "s3:GetObject",
-          "s3:PutObject",
-          "s3:DeleteObject",
-          "s3:ListBucket"
+          "dynamodb:GetItem",
+          "dynamodb:PutItem",
+          "dynamodb:DeleteItem",
+          "dynamodb:DescribeTable"
         ]
         Resource = [
-          "arn:aws:s3:::${var.tf_state_bucket}",
-          "arn:aws:s3:::${var.tf_state_bucket}/*"
+          "arn:aws:dynamodb:eu-central-1:373270679710:table/terraform-state-locks"
         ]
       },
       {
         Effect = "Allow"
         Action = [
-          "dynamodb:GetItem",
-          "dynamodb:PutItem",
-          "dynamodb:DeleteItem"
+          "iam:GetOpenIDConnectProvider",
+          "iam:GetRole",
+          "iam:GetRolePolicy",
+          "iam:ListRolePolicies",
+          "iam:ListAttachedRolePolicies"
         ]
-        Resource = "arn:aws:dynamodb:eu-central-1:*:table/${var.tf_lock_table}"
+        Resource = "*"
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "acm:DescribeCertificate",
+          "acm:ListCertificates"
+        ]
+        Resource = "*"
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "route53:GetHostedZone",
+          "route53:ListHostedZones",
+          "route53:ListResourceRecordSets",
+          "route53:ChangeResourceRecordSets"
+        ]
+        Resource = "*"
       }
     ]
   })
